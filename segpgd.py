@@ -1,5 +1,11 @@
-# code adapted from: https://adversarial-attacks-pytorch.readthedocs.io/en/latest/
-# SegPGD: https://arxiv.org/pdf/2207.12391.pdf
+# Author: Asif Hanif
+# Link: https://github.com/asif-hanif/segpgd
+
+
+# PGD code adapted from: https://adversarial-attacks-pytorch.readthedocs.io/en/latest/
+# SegPGD: https://arxiv.org/pdf/2207.12391.pdf (Jindong Gu, Hengshuang Zhao, Volker Tresp, Philip Torr)
+
+
 
 import torch
 import warnings
