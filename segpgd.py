@@ -10,16 +10,11 @@
 import torch
 import warnings
 
-from monai.networks import one_hot
-
-
 def to_onehot(labels, num_classes):
     B,dim,H,W,D = labels.shape
     assert dim == 1,  f"Invalid 'labels' shape. The second dimension should have a size of 1, but it has a size of {dim}."
-    labels = torch.nn.functional.one_hot(labels.permute(0,2,3,4,1),num_classes=num_classes) # [B,1,H,W,D] --> [B,H,W,D,1] --> [B,H,W,D,num_classes]
-return labels.permute(0,4,1,2,3)
-
-
+    labels = torch.nn.functional.one_hot(labels[:,0],num_classes=num_classes) # [B,1,H,W,D] --> [B,H,W,D] --> [B,H,W,D,num_classes]
+    return labels.permute(0,4,1,2,3) # [B,H,W,D,num_classes] --> [B,num_classes,H,W,D]
 
 
 def DiceLoss(input, target, squared_pred=False, smooth_nr= 1e-5, smooth_dr= 1e-5):
@@ -45,7 +40,7 @@ def DiceLoss(input, target, squared_pred=False, smooth_nr= 1e-5, smooth_dr= 1e-5
 def seg_projected_gradient_descent_l_inf(model, images, labels, loss_fn, n_classes=None, steps=20, alpha=2/255, eps=8/255, random_start=True, device=None, targeted=False, verbose=True):
     # model for volumetric image segmentation
     # images: [B,C,H,W,D] normalized to [0,1]. B=BatchSize, C=Number-of-Channels,  H=Height,  W=Width, D=Depth
-    # labels: [B,C,H,W,D] (in integer form)
+    # labels: [B,1,H,W,D] (in integer form)
 
     # Note: I used single channel volumetric images. Therefore, C=1 
 
@@ -85,7 +80,7 @@ def seg_projected_gradient_descent_l_inf(model, images, labels, loss_fn, n_class
         wrong_voxels = labels[:,0] != pred_labels    # wrongly classified voxels    [B,H,W,D]
         
 
-        labels_onehot = one_hot(labels, num_classes=n_classes) # [B,1,H,W,D] -->  [B,NumClass,H,W,D]
+        labels_onehot = to_onehot(labels, num_classes=n_classes) # [B,1,H,W,D] -->  [B,NumClass,H,W,D]
 
         adv_pred_softmax  = softmax(adv_logits)                # [B,NumClass,H,W,D]
 
