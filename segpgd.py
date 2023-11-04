@@ -37,7 +37,7 @@ def DiceLoss(input, target, squared_pred=False, smooth_nr= 1e-5, smooth_dr= 1e-5
 
 
 
-def seg_projected_gradient_descent_l_inf(model, images, labels, loss_fn, n_classes=None, steps=20, alpha=2/255, eps=8/255, random_start=True, device=None, targeted=False, verbose=True):
+def seg_projected_gradient_descent_l_inf(model, images, labels, loss_fn, num_classes=None, steps=20, alpha=2/255, eps=8/255, random_start=True, device=None, targeted=False, verbose=True):
     # model for volumetric image segmentation
     # images: [B,C,H,W,D] normalized to [0,1]. B=BatchSize, C=Number-of-Channels,  H=Height,  W=Width, D=Depth
     # labels: [B,1,H,W,D] (in integer form)
@@ -50,7 +50,7 @@ def seg_projected_gradient_descent_l_inf(model, images, labels, loss_fn, n_class
         if images.max()>1 or images.min()<0 : warnings.warn(f"SegPGD Attack: Image values are expected to be in the range of [0,1], instead found [min,max]=[{images.min().item()} , {images.max().item()}]")
 
 
-    assert n_classes is not None, "'n_classes' is None. Specify the number of classes present in ground truth labels for 'SegPGD' to proceed."
+    assert num_classes is not None, "'num_classes' is None. Specify the number of classes present in ground truth labels for 'SegPGD' to proceed."
 
 
     images = images.clone().detach().to(device)  #  [B,C=1,H,W,D]
@@ -80,7 +80,7 @@ def seg_projected_gradient_descent_l_inf(model, images, labels, loss_fn, n_class
         wrong_voxels = labels[:,0] != pred_labels    # wrongly classified voxels    [B,H,W,D]
         
 
-        labels_onehot = to_onehot(labels, num_classes=n_classes) # [B,1,H,W,D] -->  [B,NumClass,H,W,D]
+        labels_onehot = to_onehot(labels, num_classes=num_classes) # [B,1,H,W,D] -->  [B,NumClass,H,W,D]
 
         adv_pred_softmax  = softmax(adv_logits)                # [B,NumClass,H,W,D]
 
