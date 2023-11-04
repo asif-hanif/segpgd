@@ -35,8 +35,6 @@ def DiceLoss(input, target, squared_pred=False, smooth_nr= 1e-5, smooth_dr= 1e-5
     return dice_loss
 
 
-
-
 def seg_projected_gradient_descent_l_inf(model, images, labels, loss_fn, num_classes=None, steps=20, alpha=2/255, eps=8/255, random_start=True, device=None, targeted=False, verbose=True):
     # model for volumetric image segmentation
     # images: [B,C,H,W,D] normalized to [0,1]. B=BatchSize, C=Number-of-Channels,  H=Height,  W=Width, D=Depth
@@ -118,7 +116,8 @@ def seg_projected_gradient_descent_l_inf(model, images, labels, loss_fn, num_cla
 
 
 
-
+if __name__ == '__main__':
+    
 
 
 
