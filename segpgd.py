@@ -13,6 +13,15 @@ import warnings
 from monai.networks import one_hot
 
 
+def to_onehot(labels, num_classes):
+    B,dim,H,W,D = labels.shape
+    assert dim == 1,  f"Invalid 'labels' shape. The second dimension should have a size of 1, but it has a size of {dim}."
+    labels = torch.nn.functional.one_hot(labels.permute(0,2,3,4,1),num_classes=num_classes) # [B,1,H,W,D] --> [B,H,W,D,1] --> [B,H,W,D,num_classes]
+return labels.permute(0,4,1,2,3)
+
+
+
+
 def DiceLoss(input, target, squared_pred=False, smooth_nr= 1e-5, smooth_dr= 1e-5):
     
     intersection = torch.sum(target * input)
